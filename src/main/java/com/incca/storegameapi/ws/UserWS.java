@@ -17,6 +17,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * REST Web Service
@@ -44,9 +45,10 @@ public class UserWS {
      * @return an instance of com.incca.storegameapi.dto.User
      */
     @GET
-    @Produces(MediaType.APPLICATION_XML) 
-    public Result<List<User>> getUsers() {
-        return userBO.get();
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getUsers() {
+        return Response.ok(userBO.get()).build();
     }
 
     /**
