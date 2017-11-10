@@ -6,14 +6,14 @@
 package com.incca.storegameapi.ws;
 
 import com.incca.storegameapi.bo.UserBO;
-import com.incca.storegameapi.dto.Result;
+import com.incca.storegameapi.dto.Credentials;
 import com.incca.storegameapi.dto.User;
-import java.util.List;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
@@ -49,6 +49,20 @@ public class UserWS {
     @Produces({MediaType.APPLICATION_JSON})
     public Response getUsers() {
         return Response.ok(userBO.get()).build();
+    }
+    
+    /**
+     * Retrieves representation of an instance of
+     * com.incca.storegameapi.ws.UserWS
+     *
+     * @param c
+     * @return an instance of com.incca.storegameapi.dto.User
+     */
+    @POST
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response signIn(Credentials c) {
+        return Response.ok(userBO.signIn(c)).build();
     }
 
     /**

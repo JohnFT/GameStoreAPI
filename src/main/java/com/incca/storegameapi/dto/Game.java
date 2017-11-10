@@ -16,6 +16,15 @@ public class Game {
     private Long gam_price;
     private String game_detail;
     private Integer game_unity;
+    private String game_image;
+
+    public String getGame_image() {
+        return game_image;
+    }
+
+    public void setGame_image(String game_image) {
+        this.game_image = game_image;
+    }
 
     public Long getGam_code() {
         return gam_code;
