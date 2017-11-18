@@ -29,7 +29,10 @@ public class GameDAO implements IGenerical<Game> {
             + " ( gam_name, gam_price, game_detail, game_unity, game_image)"
             + " VALUES ( ?, ?, ?, ?, ?);";
     private final static String GETSQL = "SELECT gam_code, gam_name, gam_price, "
-            + "game_detail, game_unity, game_image FROM game;";
+            + "game_detail, game_unity, game_image FROM game WHERE game_unity > 0;";
+    private final static String FINDSQL = "SELECT gam_code, gam_name, gam_price, "
+            + "game_detail, game_unity, game_image FROM game WHERE gam_code = ?;";
+    private final static String UPDATESQL = "UPDATE game SET  game_unity = ? WHERE gam_code = ?;";
 
     @Override
     public List<Game> get() {
@@ -50,7 +53,20 @@ public class GameDAO implements IGenerical<Game> {
 
     @Override
     public Game find(Long Id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Game game = new Game();
+            conn = new ConnectionDB().getConnection();
+            PreparedStatement s = conn.prepareStatement(FINDSQL);
+            s.setLong(1, Id);
+            ResultSet r = s.executeQuery();
+            if (r.next()) {
+                game = mapGame(r);
+            }
+            return game;
+        } catch (SQLException ex) {
+            Logger.getLogger(GameDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
     @Override
@@ -60,7 +76,16 @@ public class GameDAO implements IGenerical<Game> {
 
     @Override
     public Boolean update(Game e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            conn = new ConnectionDB().getConnection();
+            PreparedStatement ps = conn.prepareStatement(UPDATESQL);
+            ps.setInt(1, e.getGame_unity() - 1);
+            ps.setLong(2, e.getGam_code());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(GameDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
     @Override

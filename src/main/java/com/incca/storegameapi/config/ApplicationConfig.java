@@ -31,6 +31,7 @@ public class ApplicationConfig extends Application {
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(com.incca.storegameapi.config.CrossOriginResourceSharingFilter.class);
         resources.add(com.incca.storegameapi.ws.GameWS.class);
+        resources.add(com.incca.storegameapi.ws.MyGamesWS.class);
         resources.add(com.incca.storegameapi.ws.PayWS.class);
         resources.add(com.incca.storegameapi.ws.SignUpWS.class);
         resources.add(com.incca.storegameapi.ws.UserWS.class);

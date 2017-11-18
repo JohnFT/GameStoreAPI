@@ -7,8 +7,6 @@ package com.incca.storegameapi.dto;
 
 import java.util.Date;
 
-
-
 /**
  *
  * @author Home
@@ -22,6 +20,7 @@ public class Pay {
     private long use_code;
     private Date pay_dateend;
     private int pay_security;
+    private long pay_game;
 
     public long getPay_code() {
         return pay_code;
@@ -77,6 +76,14 @@ public class Pay {
 
     public void setPay_security(int pay_security) {
         this.pay_security = pay_security;
+    }
+
+    public long getPay_game() {
+        return pay_game;
+    }
+
+    public void setPay_game(long pay_game) {
+        this.pay_game = pay_game;
     }
 
 }

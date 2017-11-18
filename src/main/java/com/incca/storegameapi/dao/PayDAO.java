@@ -11,7 +11,9 @@ import com.incca.storegameapi.interfaces.IGenerical;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,8 +24,9 @@ import java.util.logging.Logger;
  */
 public class PayDAO implements IGenerical<Pay> {
 
-    final static String ADDSQL = "INSERT INTO public.pay(pay_date, pay_card, pay_price, use_code, pay_dateend,"
-            + "pay_security)VALUES ( ?, ?, ?, ?, ?, ?)";
+    final static String ADDSQL = "INSERT INTO public.pay(pay_code, pay_card, pay_price, use_code, pay_dateend,"
+            + "pay_security, pay_game)VALUES ( ?,?, ?, ?, ?, ?, ?)";
+    final static String FINDSQL = "SELECT * FROM public.pay WHERE pay_code = ?";
 
     Connection conn;
 
@@ -34,7 +37,20 @@ public class PayDAO implements IGenerical<Pay> {
 
     @Override
     public Pay find(Long Id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Pay pay = new Pay();
+            conn = new ConnectionDB().getConnection();
+            PreparedStatement p = conn.prepareStatement(FINDSQL);
+            p.setLong(1, Id);
+            ResultSet r = p.executeQuery();
+            if (r.next()) {
+                pay.setPay_code(r.getLong("pay_code"));
+            }
+            return pay;
+        } catch (SQLException ex) {
+            Logger.getLogger(PayDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
     @Override
@@ -49,20 +65,45 @@ public class PayDAO implements IGenerical<Pay> {
 
     @Override
     public Boolean add(Pay e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Pay buy(Pay e) {
         try {
             conn = new ConnectionDB().getConnection();
             PreparedStatement ps = conn.prepareStatement(ADDSQL);
-            ps.setLong(1, e.getPay_card());
-            ps.setLong(2, e.getPay_price());
-            ps.setLong(3, e.getUse_code());
-            ps.setDate(4, Date.valueOf(e.getPay_dateend().toString()));
-            return ps.executeUpdate() > 0;
+            Long id = next();
+            ps.setLong(1, id);
+            ps.setLong(2, e.getPay_card());
+            ps.setLong(3, e.getPay_price());
+            ps.setLong(4, e.getUse_code());
+            ps.setDate(5, new Date(e.getPay_dateend().getTime()));
+            ps.setInt(6, e.getPay_security());
+            ps.setLong(7, e.getPay_game());
+            if(ps.executeUpdate() > 0){
+                return find(id);
+            }
+            return null;
         } catch (SQLException ex) {
             Logger.getLogger(PayDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return  false;
+            return null;
         }
     }
-    
-    
+
+    public Long next() {
+        try {
+            conn = new ConnectionDB().getConnection();
+            Statement ps = conn.createStatement();
+            ResultSet r = ps.executeQuery("SELECT nextval('pay_pay_code_seq') id");
+            if (r.next()) {
+                return r.getLong("id");
+            }
+            return 0L;
+        } catch (SQLException ex) {
+            Logger.getLogger(PayDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return 0L;
+        }
+
+    }
 
 }

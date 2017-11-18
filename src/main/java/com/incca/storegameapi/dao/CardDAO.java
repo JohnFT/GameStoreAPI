@@ -29,12 +29,11 @@ public class CardDAO implements IGenerical<Card> {
     private final static String SQLFILTER = "SELECT car_code, car_number, "
             + "car_dateend, car_security, car_date, car_money "
             + "FROM cards WHERE car_number = ? AND car_security = ? AND car_dateend = ?";
+    private final static String SQLUPDATE = "UPDATE public.cards SET  car_money= ?"
+            + "WHERE car_code = ?";
+
     private Connection conn;
     SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
-
-    public CardDAO() {
-        conn = new ConnectionDB().getConnection();
-    }
 
     @Override
     public List<Card> get() {
@@ -53,7 +52,16 @@ public class CardDAO implements IGenerical<Card> {
 
     @Override
     public Boolean update(Card e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            conn = new ConnectionDB().getConnection();
+            PreparedStatement ps = conn.prepareStatement(SQLUPDATE);
+            ps.setLong(1, e.getCar_money());
+            ps.setLong(2, e.getCar_code());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(CardDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
     @Override
@@ -63,6 +71,7 @@ public class CardDAO implements IGenerical<Card> {
 
     public Card filter(Pay e) {
         try {
+            conn = new ConnectionDB().getConnection();
             Card card = new Card();
             PreparedStatement ps = conn.prepareStatement(SQLFILTER);
             ps.setLong(1, e.getPay_card());
@@ -78,19 +87,9 @@ public class CardDAO implements IGenerical<Card> {
                 card.setCar_security(r.getInt("car_security"));
             }
             return card;
-        } catch (SQLException ex) {
+        } catch (SQLException | ParseException ex) {
             Logger.getLogger(CardDAO.class.getName()).log(Level.SEVERE, null, ex);
             return null;
-        } catch (ParseException ex) {
-            Logger.getLogger(CardDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        } finally {
-            try {
-                conn.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(CardDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
-
     }
 }

@@ -5,12 +5,14 @@
  */
 package com.incca.storegameapi.ws;
 
-import com.incca.storegameapi.bo.PayBO;
-import com.incca.storegameapi.dto.Pay;
+import com.incca.storegameapi.bo.MyGamesBO;
+import com.incca.storegameapi.dto.MyGames;
 import com.incca.storegameapi.dto.Result;
+import java.util.List;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -20,22 +22,22 @@ import javax.ws.rs.core.UriInfo;
  *
  * @author Home
  */
-@Path("pay")
-public class PayWS {
+@Path("my-games")
+public class MyGamesWS {
 
     @Context
     private UriInfo context;
-    private PayBO payBO;
+    private final MyGamesBO myGamesBO;
 
-    public PayWS() {
-        payBO = new PayBO();
+    public MyGamesWS() {
+        myGamesBO = new MyGamesBO();
     }
 
-    @POST
+    @GET
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Result<Pay> add(Pay pay) {
-        return payBO.add(pay);
+    @Path("{usecode}")
+    public Result<List<MyGames>> get(@PathParam("usecode") Long usecode){
+        return myGamesBO.get(usecode);
     }
-
 }

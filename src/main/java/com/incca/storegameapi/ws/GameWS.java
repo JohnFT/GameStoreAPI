@@ -42,4 +42,5 @@ public class GameWS {
     public Result<Boolean> addGame(Game g) {
         return gameBO.add(g);
     }
+    
 }
